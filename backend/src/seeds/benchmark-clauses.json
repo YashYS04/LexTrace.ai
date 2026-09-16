@@ -1,0 +1,162 @@
+[
+  {
+    "id": "BM-PAY-001",
+    "clauseType": "Payment Terms",
+    "applicablePersonas": ["Freelancer", "SmallBusiness"],
+    "standardText": "Client shall pay Contractor all undisputed invoices within thirty (30) days of receipt (Net 30). In the event of a disputed invoice, Client shall pay the undisputed portion on schedule and notify Contractor of the disputed amount within ten (10) business days, specifying the reason in writing. Overdue amounts shall accrue interest at the rate of 1.0% per month or the maximum rate permitted by law.",
+    "keyElements": ["Net 30 payment timeline", "Good-faith partial payment on dispute", "Reasonable interest on late balances"],
+    "riskGuidance": "Clauses allowing unilateral subjective withholding, indefinite payment delays, or zero recourse for non-payment are unfavorable."
+  },
+  {
+    "id": "BM-PAY-002",
+    "clauseType": "Payment Terms",
+    "applicablePersonas": ["Employee"],
+    "standardText": "Employee shall be paid semi-monthly in accordance with Company's standard payroll schedule, less applicable statutory withholdings and taxes. Any bonus compensation shall be calculated in accordance with objective written metrics outlined in the annual incentive plan.",
+    "keyElements": ["Regular payroll cycle", "Clear statutory deductions", "Objective bonus metrics"],
+    "riskGuidance": "Clauses allowing arbitrary retro-active salary reductions or unbridled discretion to revoke earned compensation are unfavorable."
+  },
+  {
+    "id": "BM-IP-001",
+    "clauseType": "Intellectual Property",
+    "applicablePersonas": ["Freelancer", "SmallBusiness"],
+    "standardText": "Upon full payment of all fees due hereunder, Contractor assigns to Client all right, title, and interest in and to the custom deliverables created specifically for Client under this Agreement. Contractor retains all ownership of Contractor's pre-existing tools, libraries, and background IP, and grants Client a perpetual, royalty-free, non-exclusive license to use such background IP as integrated into the deliverables. Contractor retains ownership of any work developed outside of the scope of work without use of Client materials.",
+    "keyElements": ["Transfer conditioned on full payment", "Carve-out for pre-existing background IP", "Protection for independent personal work"],
+    "riskGuidance": "Immediate assignment without payment, capturing personal weekend work, or broad forfeiture of background libraries is unfavorable."
+  },
+  {
+    "id": "BM-IP-002",
+    "clauseType": "Intellectual Property",
+    "applicablePersonas": ["Employee"],
+    "standardText": "Employee agrees that all inventions, discoveries, designs, and code created by Employee during the term of employment that directly relate to Company's business or result from tasks assigned by Company, or that are created using Company equipment or confidential data, shall be assigned to Company. Company claims no rights in inventions developed entirely on Employee's own time without using Company equipment, supplies, facilities, or trade secret information, in accordance with applicable state labor codes.",
+    "keyElements": ["Statutory carve-out for personal inventions", "Restricted to assigned work and company assets"],
+    "riskGuidance": "Clauses capturing everything created at any time, anywhere, without statutory labor exemptions are unfavorable."
+  },
+  {
+    "id": "BM-IND-001",
+    "clauseType": "Indemnification",
+    "applicablePersonas": ["Freelancer", "SmallBusiness"],
+    "standardText": "Each party shall defend, indemnify, and hold harmless the other party and its officers, directors, and employees from and against any third-party claims, liabilities, losses, and reasonable legal expenses arising directly from the indemnifying party's gross negligence, willful misconduct, or material breach of this Agreement. Contractor's indemnification obligation for IP infringement shall not apply to claims resulting from specifications or materials provided by Client.",
+    "keyElements": ["Mutual indemnification", "Gross negligence or willful misconduct standard", "Exclusion for client-provided assets"],
+    "riskGuidance": "Unilateral indemnification where contractor bears all client liability regardless of client fault is unfavorable."
+  },
+  {
+    "id": "BM-IND-002",
+    "clauseType": "Indemnification",
+    "applicablePersonas": ["Tenant"],
+    "standardText": "Tenant agrees to hold Landlord harmless from damages or injuries occurring within the leased premises resulting from Tenant's or Tenant's guests' intentional acts or negligence. Landlord agrees to indemnify and hold Tenant harmless from any claims or injuries occurring in common areas or resulting from Landlord's negligence or failure to maintain the property.",
+    "keyElements": ["Mutual liability responsibility", "Common area landlord accountability"],
+    "riskGuidance": "Clauses requiring tenant to indemnify landlord for landlord's own negligence or common area defects are unfavorable and often void."
+  },
+  {
+    "id": "BM-LIM-001",
+    "clauseType": "Limitation of Liability",
+    "applicablePersonas": ["Freelancer", "SmallBusiness"],
+    "standardText": "Except for breaches of confidentiality or indemnification obligations, neither party shall be liable for indirect, incidental, special, or consequential damages. Each party's total cumulative liability arising out of or related to this Agreement shall be capped at the total amount of fees paid or payable by Client to Contractor under this Agreement in the twelve (12) months preceding the event giving rise to liability.",
+    "keyElements": ["Mutual liability cap", "Tied to 12 months fees", "Mutual exclusion of consequential damages"],
+    "riskGuidance": "Asymmetric caps (e.g. client capped at $100 while contractor has unlimited liability) are unfavorable."
+  },
+  {
+    "id": "BM-TERM-001",
+    "clauseType": "Termination",
+    "applicablePersonas": ["Freelancer", "SmallBusiness"],
+    "standardText": "Either party may terminate this Agreement without cause upon providing thirty (30) days prior written notice to the other party. Either party may terminate immediately upon written notice if the other party commits a material breach and fails to cure such breach within fifteen (15) days of receiving written notice. Upon termination, Contractor shall be compensated for all authorized work performed up to the date of termination.",
+    "keyElements": ["Mutual right of termination for convenience", "15-day cure period for breach", "Guaranteed compensation for completed work"],
+    "riskGuidance": "Unilateral immediate termination by client with lengthy contractor notice period or forfeiture of earned fees is unfavorable."
+  },
+  {
+    "id": "BM-TERM-002",
+    "clauseType": "Termination",
+    "applicablePersonas": ["Tenant"],
+    "standardText": "Either party may terminate the tenancy at the conclusion of the initial lease term by providing at least thirty (30) days prior written notice. If Tenant must terminate early due to military deployment, job relocation exceeding 50 miles, or domestic safety reasons, Tenant may terminate upon sixty (60) days notice with an early termination fee not to exceed one (1) month's rent.",
+    "keyElements": ["Standard 30-day non-renewal notice", "Reasonable early termination protections and capped fees"],
+    "riskGuidance": "Automatic renewal traps requiring 120+ days notice, accelerated full remaining rent penalties, or zero early exit provisions are unfavorable."
+  },
+  {
+    "id": "BM-NONCOMP-001",
+    "clauseType": "Non-Compete/Non-Solicitation",
+    "applicablePersonas": ["Freelancer", "SmallBusiness"],
+    "standardText": "Contractor shall be free to render services to other clients and engage in other commercial activities, provided such activities do not breach Contractor's confidentiality obligations under this Agreement. During the term and for six (6) months thereafter, neither party shall actively solicit for employment any employee of the other party directly involved in the engagement, excluding responses to general public job advertisements.",
+    "keyElements": ["Zero restriction on contractor's general trade/services", "Limited mutual non-solicitation with public ad carve-out"],
+    "riskGuidance": "Restricting an independent contractor from working in their field, for competitors, or in broad geographies is unfavorable and legally problematic."
+  },
+  {
+    "id": "BM-NONCOMP-002",
+    "clauseType": "Non-Compete/Non-Solicitation",
+    "applicablePersonas": ["Employee"],
+    "standardText": "During the term of employment, Employee shall devote full business time to Company. Following termination, Employee agrees not to solicit Company customers with whom Employee had direct business contact during the final twelve (12) months of employment for a period of twelve (12) months. Any post-employment restrictive covenant shall strictly comply with applicable state labor laws governing reasonableness of scope, geography, and duration.",
+    "keyElements": ["Customer non-solicitation limited to direct contacts", "Compliance with state labor laws"],
+    "riskGuidance": "Blanket worldwide non-compete clauses prohibiting working in software/tech for 2+ years are unfavorable and unenforceable in many jurisdictions."
+  },
+  {
+    "id": "BM-LEASE-ENTRY-001",
+    "clauseType": "Landlord Entry",
+    "applicablePersonas": ["Tenant"],
+    "standardText": "Landlord or Landlord's authorized agents may enter the Premises during reasonable business hours (9:00 AM to 6:00 PM) for inspections, necessary repairs, or to show the property to prospective tenants or purchasers, provided Landlord gives Tenant at least twenty-four (24) hours advance written notice. Landlord may enter without prior notice only in the event of an imminent emergency threatening life or property.",
+    "keyElements": ["24-hour advance written notice requirement", "Entry restricted to reasonable business hours", "Emergency-only unannounced entry"],
+    "riskGuidance": "Clauses permitting unrestricted entry at any hour without advance notice violate the tenant's covenant of quiet enjoyment."
+  },
+  {
+    "id": "BM-LEASE-DEP-001",
+    "clauseType": "Security Deposit",
+    "applicablePersonas": ["Tenant"],
+    "standardText": "Tenant shall deposit with Landlord the sum of one month's rent as a security deposit, held in a designated escrow account. Within twenty-one (21) days of lease termination and surrender of the premises, Landlord shall return the full deposit to Tenant, or return the balance accompanied by an itemized written statement of lawful deductions supported by repair invoices or receipts. Normal wear and tear shall not be deducted.",
+    "keyElements": ["Segregated escrow account", "21-day statutory return window", "Itemized receipts required", "Carve-out for normal wear and tear"],
+    "riskGuidance": "Non-refundable deposits, commingling with operating funds, or deductions without itemized receipts are unfavorable."
+  },
+  {
+    "id": "BM-LEASE-MAINT-001",
+    "clauseType": "Maintenance",
+    "applicablePersonas": ["Tenant"],
+    "standardText": "Landlord shall maintain the structural components, roof, plumbing, electrical, heating, ventilation, air conditioning, and major appliances in good working order and in compliance with all housing and habitability codes. Tenant shall keep the premises in clean, sanitary condition and promptly report any defects or water leaks to Landlord. Tenant shall only be responsible for repairs necessitated by Tenant's misuse or gross negligence.",
+    "keyElements": ["Landlord maintains habitability, HVAC, and structure", "Tenant responsible only for personal misuse"],
+    "riskGuidance": "Clauses shifting all maintenance, structural upkeep, or pre-existing appliance failures onto the tenant are unfavorable."
+  },
+  {
+    "id": "BM-CONF-001",
+    "clauseType": "Confidentiality",
+    "applicablePersonas": ["All", "Freelancer", "Employee", "SmallBusiness"],
+    "standardText": "Each party agrees to safeguard the other party's confidential information using the same degree of care it exercises with its own confidential data (and in no event less than reasonable care) for a period of three (3) years following disclosure. Confidential information shall exclude information that is publicly known through no breach, already known prior to receipt, or independently developed without reference to the disclosing party's information.",
+    "keyElements": ["Mutual standard of care", "Standard 3-year sunset period", "Standard exclusions (public, prior knowledge, independent development)"],
+    "riskGuidance": "Perpetual, unilateral confidentiality with no standard exclusions is unfavorable."
+  },
+  {
+    "id": "BM-DISP-001",
+    "clauseType": "Dispute Resolution",
+    "applicablePersonas": ["All", "Freelancer", "SmallBusiness"],
+    "standardText": "In the event of any controversy or claim arising out of this Agreement, the parties shall first attempt in good faith to resolve the dispute through informal executive discussions for thirty (30) days. If unresolved, the dispute shall be submitted to confidential mediation before resorting to formal litigation or binding arbitration. The prevailing party shall be entitled to recover reasonable attorney fees and costs.",
+    "keyElements": ["Informal negotiation and mediation step", "Prevailing party legal fees recovery"],
+    "riskGuidance": "One-sided attorney fee shifting where one party pays even if they win, or forced distant arbitration forums, are unfavorable."
+  },
+  {
+    "id": "BM-GOV-001",
+    "clauseType": "Governing Law",
+    "applicablePersonas": ["All", "Freelancer", "Tenant", "Employee"],
+    "standardText": "This Agreement shall be governed by and construed in accordance with the laws of the jurisdiction where the services are performed or the property is located, without regard to conflict of law principles. Any legal proceeding shall be brought in the courts located in such jurisdiction.",
+    "keyElements": ["Local jurisdiction alignment", "Convenient venue for the performing/renting party"],
+    "riskGuidance": "Forcing an individual contractor or tenant to litigate in a distant state or offshore jurisdiction is unfavorable."
+  },
+  {
+    "id": "BM-FORCE-001",
+    "clauseType": "Force Majeure",
+    "applicablePersonas": ["All", "Freelancer", "SmallBusiness"],
+    "standardText": "Neither party shall be liable for delay or failure in performing its obligations (other than payment of monies due) caused by events beyond its reasonable control, including acts of God, natural disasters, armed conflict, civil disturbances, or widespread utility outages, provided the affected party promptly gives written notice to the other party.",
+    "keyElements": ["Mutual protection for uncontrollable events", "Prompt notification requirement"],
+    "riskGuidance": "Unilateral force majeure clauses or those excusing total performance without notice are unfavorable."
+  },
+  {
+    "id": "BM-WARRANTY-001",
+    "clauseType": "Warranty/Representations",
+    "applicablePersonas": ["Freelancer", "SmallBusiness"],
+    "standardText": "Contractor warrants that services will be performed in a professional and workmanlike manner in accordance with recognized industry standards. Contractor warrants that deliverables will conform to agreed specifications for a period of thirty (30) days following delivery. Except as expressly provided, Contractor disclaims all other warranties, express or implied, including merchantability and fitness for a particular purpose.",
+    "keyElements": ["Workmanlike standard", "Reasonable 30-day warranty period", "Standard disclaimer of implied warranties"],
+    "riskGuidance": "Perpetual strict liability warranties or guarantees of commercial profitability are unfavorable."
+  },
+  {
+    "id": "BM-NOTICE-001",
+    "clauseType": "Notice",
+    "applicablePersonas": ["All", "Freelancer", "Tenant", "Employee"],
+    "standardText": "All notices required or permitted under this Agreement shall be in writing and deemed duly given when delivered personally, sent by confirmed electronic mail, or delivered by reputable overnight courier to the address designated by each party.",
+    "keyElements": ["Email notice accepted", "Clear delivery confirmation mechanisms"],
+    "riskGuidance": "Notice clauses requiring certified mail only with unfeasible advance notice windows are unfavorable."
+  }
+]

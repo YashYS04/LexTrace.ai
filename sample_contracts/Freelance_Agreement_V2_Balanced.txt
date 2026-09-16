@@ -1,0 +1,33 @@
+INDEPENDENT CONTRACTOR SERVICES AGREEMENT
+
+This Independent Contractor Agreement (the "Agreement") is made and entered into as of October 1, 2024, by and between Apex Global Solutions Inc. ("Client"), and Alex Morgan ("Contractor").
+
+1. SCOPE OF SERVICES
+Contractor agrees to perform software development, architecture review, and deployment services as described in Statement of Work #1 attached hereto. Any modification to the scope must be agreed upon in a written amendment signed by both parties.
+
+2. PAYMENT TERMS & COMPENSATION
+Client shall pay Contractor the sum of $85.00 per hour. Contractor shall invoice Client bi-weekly. Client shall pay all undisputed invoice amounts within thirty (30) days of receipt (Net 30). In the event of a good faith dispute regarding an invoice, Client shall pay the undisputed portion on time and provide written notice detailing the dispute within ten (10) business days. Overdue balances shall accrue interest at the rate of 1.5% per month or the maximum legal rate.
+
+3. INTELLECTUAL PROPERTY OWNERSHIP
+Upon full and final payment of all applicable fees, Contractor assigns to Client all rights, title, and interest in and to the custom deliverables specifically developed for Client under this Agreement. Contractor retains all right, title, and interest in pre-existing tools, libraries, general design patterns, and proprietary software ("Background IP"). Contractor grants Client a non-exclusive, perpetual, royalty-free license to use Background IP solely as incorporated into the deliverables. Contractor retains full ownership of any inventions or projects created on Contractor's personal time without using Client equipment or confidential data.
+
+4. INDEMNIFICATION
+Each party (the "Indemnifying Party") shall indemnify, defend, and hold harmless the other party, its officers, and employees from and against any third-party claims, damages, and legal costs resulting from the Indemnifying Party's gross negligence, willful misconduct, or material breach of this Agreement. Contractor's indemnity for intellectual property infringement shall apply only to deliverables as delivered by Contractor, excluding modifications made by Client.
+
+5. LIMITATION OF LIABILITY
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, NEITHER PARTY SHALL BE LIABLE TO THE OTHER FOR ANY INDIRECT, INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES. EACH PARTY'S TOTAL AGGREGATE LIABILITY ARISING UNDER OR RELATED TO THIS AGREEMENT SHALL BE LIMITED TO THE TOTAL FEES PAID OR PAYABLE BY CLIENT TO CONTRACTOR IN THE TWELVE (12) MONTHS PRECEDING THE CLAIM.
+
+6. TERMINATION
+Either party may terminate this Agreement without cause upon providing thirty (30) days prior written notice to the other party. Either party may terminate immediately for cause upon written notice if the other party materially breaches this Agreement and fails to cure such breach within fifteen (15) days of receipt of written notice. Upon termination, Client shall promptly pay Contractor for all services performed up to the effective termination date.
+
+7. NON-SOLICITATION
+During the term of this Agreement and for twelve (12) months thereafter, neither party shall actively solicit for employment any employee of the other party involved in the performance of services under this Agreement, excluding general public job postings. There shall be no restriction on Contractor's right to perform software engineering or consulting services for other clients or industries.
+
+8. CONFIDENTIALITY
+Each party shall protect the other party's confidential information with the same degree of care it uses for its own confidential materials (and at least reasonable care) for a period of three (3) years following disclosure. Confidential information does not include information that is publicly known or independently developed without reference to the disclosing party's information.
+
+9. GOVERNING LAW AND DISPUTE RESOLUTION
+This Agreement shall be governed by the laws of the State of Delaware. Any dispute arising out of or related to this Agreement shall first be submitted to good-faith mediation before initiating binding arbitration administered by the American Arbitration Association (AAA). The prevailing party shall be entitled to recover reasonable attorney fees and costs.
+
+10. ENTIRE AGREEMENT
+This Agreement constitutes the entire agreement between the parties and supersedes all prior agreements or understandings. Amendments must be in writing and signed by authorized representatives of both parties.

@@ -1,0 +1,24 @@
+EMPLOYMENT AND PROPRIETARY INFORMATION AGREEMENT
+
+This Employment Agreement (the "Agreement") is entered into between Novus Technologies Inc. ("Company") and Riley Vance ("Employee").
+
+1. POSITION AND DUTIES
+Employee will serve as Senior Systems Architect, performing duties assigned by Company management, working full-time and exclusively for Company.
+
+2. COMPENSATION AND BENEFITS
+Employee shall receive an annualized base salary of $145,000, payable in accordance with Company's standard payroll cycle. Discretionary bonuses and equity vesting are subject to unilateral cancellation or modification by the Board of Directors at any time without advance notice.
+
+3. INVENTIONS AND INTELLECTUAL PROPERTY ASSIGNMENT
+Employee acknowledges and agrees that all inventions, discoveries, designs, concepts, software, algorithms, ideas, writing, and intellectual property developed, authored, or conceived by Employee—whether during or outside working hours, whether on Company premises or at home, whether using Company equipment or personal devices, and whether or not related to Company's current or prospective business—shall be the sole and exclusive property of Company from the moment of conception in perpetuity worldwide. Employee hereby assigns all right, title, and interest in such inventions to Company.
+
+4. NON-COMPETE RESTRICTIONS
+During employment and for a period of twenty-four (24) months following termination of employment for any reason (whether voluntary or involuntary), Employee shall not work for, consult with, invest in, advise, or provide any technology services to any entity that operates in the software, enterprise technology, or digital cloud space anywhere in the world.
+
+5. NON-SOLICITATION AND NON-DISPARAGEMENT
+Employee shall not solicit Company employees, contractors, or clients for thirty-six (36) months following termination. Employee agrees never to publish, utter, or communicate any statement, review, or critique that can be construed as disparaging or negative towards Company, its leadership, products, or workplace culture, whether on public social media, Glassdoor, or in private communications.
+
+6. AT-WILL EMPLOYMENT AND SEVERANCE
+Employment is strictly at-will. Company may terminate Employee at any time without notice and without severance pay. If Employee resigns, Employee must provide sixty (60) days advance notice or forfeit all accrued but unused paid time off.
+
+7. ARBITRATION AND WAIVER OF CLASS ACTION
+Any controversy or dispute arising out of this Agreement or Employee's employment shall be settled by confidential binding arbitration. Employee waives any right to initiate, participate in, or recover through any class action, collective action, or representative lawsuit against Company.
