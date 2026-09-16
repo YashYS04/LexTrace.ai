@@ -53,23 +53,31 @@ export class GeminiService {
       return fallbackFn();
     }
 
-    try {
-      const model = this.client.getGenerativeModel({
-        model: this.modelName,
-        generationConfig: {
-          responseMimeType: 'application/json',
-          temperature: 0.2,
-        },
-        systemInstruction: `${systemPrompt}\n\n${LEGAL_DISCLAIMER}`,
-      });
+    const candidateModels = [this.modelName, 'gemini-2.5-flash', 'gemini-2.0-flash'].filter(
+      (m, idx, arr) => arr.indexOf(m) === idx
+    );
 
-      const response = await model.generateContent(userPrompt);
-      const text = response.response.text();
-      return JSON.parse(text) as T;
-    } catch (err) {
-      console.warn(`[GeminiService] API call failed (${(err as Error).message}), using deterministic mock fallback.`);
-      return fallbackFn();
+    for (const m of candidateModels) {
+      try {
+        const model = this.client.getGenerativeModel({
+          model: m,
+          generationConfig: {
+            responseMimeType: 'application/json',
+            temperature: 0.2,
+          },
+          systemInstruction: `${systemPrompt}\n\n${LEGAL_DISCLAIMER}`,
+        });
+
+        const response = await model.generateContent(userPrompt);
+        const text = response.response.text();
+        return JSON.parse(text) as T;
+      } catch (err) {
+        console.warn(`[GeminiService] Model ${m} attempt failed (${(err as Error).message}).`);
+      }
     }
+
+    console.warn(`[GeminiService] All remote model calls failed, using deterministic fallback.`);
+    return fallbackFn();
   }
 
   /**

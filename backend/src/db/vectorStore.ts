@@ -29,12 +29,20 @@ export class VectorStore {
     if (this.isInitialized) return;
 
     try {
-      const seedPath = path.resolve(__dirname, '../seeds/benchmark-clauses.json');
-      if (fs.existsSync(seedPath)) {
-        const rawData = fs.readFileSync(seedPath, 'utf-8');
+      const candidates = [
+        path.resolve(__dirname, '../seeds/benchmark-clauses.json'),
+        path.resolve(__dirname, '../../src/seeds/benchmark-clauses.json'),
+        path.resolve(process.cwd(), 'src/seeds/benchmark-clauses.json'),
+        path.resolve(process.cwd(), 'backend/src/seeds/benchmark-clauses.json'),
+      ];
+
+      const foundPath = candidates.find((p) => fs.existsSync(p));
+
+      if (foundPath) {
+        const rawData = fs.readFileSync(foundPath, 'utf-8');
         this.benchmarks = JSON.parse(rawData);
       } else {
-        console.warn(`[VectorStore] Seed file not found at ${seedPath}. Using built-in fallbacks.`);
+        console.warn(`[VectorStore] Seed file not found in candidates. Using built-in fallbacks.`);
       }
     } catch (err) {
       console.error('[VectorStore] Error loading benchmark seeds:', (err as Error).message);
