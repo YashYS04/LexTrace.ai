@@ -49,14 +49,25 @@ export class GeminiService {
    * Helper to invoke Gemini 2.5 Flash or fallback to mock mode.
    */
   private async generateJSON<T>(systemPrompt: string, userPrompt: string, fallbackFn: () => T): Promise<T> {
-    if (!this.client) {
+    // In automated test runs, use deterministic mock to preserve user live API quota
+    if (process.env.NODE_ENV === 'test') {
       return fallbackFn();
     }
 
-    const candidateModels = [this.modelName, 'gemini-2.5-flash', 'gemini-2.0-flash'].filter(
-      (m, idx, arr) => arr.indexOf(m) === idx
-    );
+    if (!this.client) {
+      throw new Error('Google Gemini API Key is required. Live GenAI is strictly enforced.');
+    }
 
+    const candidateModels = [
+      this.modelName,
+      'gemini-3.8-flash',
+      'gemini-3.5-flash',
+      'gemini-3.6-flash',
+      'gemini-3.1-flash-lite',
+      'gemini-flash-latest',
+    ].filter((m, idx, arr) => arr.indexOf(m) === idx);
+
+    let lastError: Error | null = null;
     for (const m of candidateModels) {
       try {
         const model = this.client.getGenerativeModel({
@@ -72,12 +83,20 @@ export class GeminiService {
         const text = response.response.text();
         return JSON.parse(text) as T;
       } catch (err) {
+        lastError = err as Error;
         console.warn(`[GeminiService] Model ${m} attempt failed (${(err as Error).message}).`);
       }
     }
 
-    console.warn(`[GeminiService] All remote model calls failed, using deterministic fallback.`);
-    return fallbackFn();
+    // In unit testing, allow mock fallback if specified
+    if (process.env.NODE_ENV === 'test') {
+      return fallbackFn();
+    }
+
+    // Strictly enforce GenAI: throw real error if API fails
+    throw new Error(
+      `GenAI generation failed across models (${candidateModels.join(', ')}): ${lastError?.message || 'Unknown error'}`
+    );
   }
 
   /**
