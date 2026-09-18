@@ -189,8 +189,8 @@ flowchart TD
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/YashYS04/LexTrace.ai.git
-cd LexTrace.ai
+git clone https://github.com/YashYS04/latextrace_ai.git
+cd latextrace_ai
 ```
 
 ### 2. Configure & Start Backend
