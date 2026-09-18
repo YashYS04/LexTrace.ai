@@ -68,7 +68,7 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({ score, riskSummary }) =>
             Overall Contract Health Score
           </h2>
           <p className="text-sm text-slate-500 mt-1 max-w-md">
-            Calculated by cross-referencing your document against 40+ market-standard legal benchmarks using Gemini 2.5 Flash vector similarity and semantic delta scoring.
+            Calculated by cross-referencing your document against 40+ market-standard legal benchmarks using dual-tier vector similarity and directional semantic delta scoring.
           </p>
         </div>
       </div>

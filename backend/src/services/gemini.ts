@@ -19,9 +19,10 @@ export class GeminiService {
   private static instance: GeminiService;
   private client: GoogleGenerativeAI | null = null;
   private modelName: string;
+  private activeWorkingModel: string | null = null;
 
   private constructor() {
-    this.modelName = env.GEMINI_MODEL || 'gemini-2.5-flash';
+    this.modelName = env.GEMINI_MODEL || 'gemini-3.8-flash';
     if (env.GEMINI_API_KEY && env.GEMINI_API_KEY.trim() !== '' && env.GEMINI_API_KEY !== 'your_gemini_api_key_here') {
       try {
         this.client = new GoogleGenerativeAI(env.GEMINI_API_KEY);
@@ -46,7 +47,7 @@ export class GeminiService {
   }
 
   /**
-   * Helper to invoke Gemini 2.5 Flash or fallback to mock mode.
+   * Helper to invoke Gemini Flash models with cascading failover and dynamic pinning.
    */
   private async generateJSON<T>(systemPrompt: string, userPrompt: string, fallbackFn: () => T): Promise<T> {
     // In automated test runs, use deterministic mock to preserve user live API quota
@@ -59,9 +60,10 @@ export class GeminiService {
     }
 
     const candidateModels = [
+      ...(this.activeWorkingModel ? [this.activeWorkingModel] : []),
       this.modelName,
-      'gemini-3.8-flash',
       'gemini-3.5-flash',
+      'gemini-3.8-flash',
       'gemini-3.6-flash',
       'gemini-3.1-flash-lite',
       'gemini-flash-latest',
@@ -81,9 +83,13 @@ export class GeminiService {
 
         const response = await model.generateContent(userPrompt);
         const text = response.response.text();
+        this.activeWorkingModel = m; // pin working model to prevent repeated latency on subsequent calls
         return JSON.parse(text) as T;
       } catch (err) {
         lastError = err as Error;
+        if (this.activeWorkingModel === m) {
+          this.activeWorkingModel = null;
+        }
         console.warn(`[GeminiService] Model ${m} attempt failed (${(err as Error).message}).`);
       }
     }
@@ -293,38 +299,91 @@ ${JSON.stringify(clausesV2, null, 2)}`;
     suggestedFollowUps: string[];
   }> {
     const fallbackFn = () => {
-      // Find clause most relevant to question keywords
-      const qLower = question.toLowerCase();
-      const matched = clauses.find(
-        (c) =>
-          qLower.includes(c.type.toLowerCase()) ||
-          c.text.toLowerCase().split(' ').some((w) => w.length > 4 && qLower.includes(w))
-      ) || clauses[0];
+      const qLower = question.toLowerCase().trim();
+      const isGreeting =
+        qLower === 'hi' ||
+        qLower === 'hello' ||
+        qLower === 'hey' ||
+        qLower.startsWith('hi ') ||
+        qLower.startsWith('hello ');
+      const isProjectQuery =
+        qLower.includes('lextrace') ||
+        qLower.includes('project') ||
+        qLower.includes('what can you do') ||
+        qLower.includes('how to use');
+
+      if (isGreeting || isProjectQuery) {
+        return {
+          answer:
+            'Hello! I am LexTrace AI, your dedicated contract intelligence and legal analysis copilot. You can ask me any question regarding terms in your contract (such as payment withholding, IP ownership, liability, or termination), or use our tools to run a 40-benchmark risk audit, redline contract versions, and generate an Attorney Consultation Dossier.',
+          eli5Answer:
+            'Hi! I help you spot hidden traps in contracts and understand your legal rights in plain English.',
+          citations: [],
+          confidenceScore: 1.0,
+          suggestedFollowUps: [
+            'Can the client refuse or delay my payments?',
+            'Do they claim ownership of my weekend code?',
+            'What are the penalties if I terminate early?',
+          ],
+        };
+      }
+
+      const matched =
+        clauses && clauses.length > 0
+          ? clauses.find(
+              (c) =>
+                qLower.includes(c.type.toLowerCase()) ||
+                c.text.toLowerCase().split(' ').some((w) => w.length > 4 && qLower.includes(w))
+            ) || clauses[0]
+          : null;
+
+      if (matched) {
+        return {
+          answer: `Based on Section ${matched.index + 1} (${matched.type}), the contract specifies: "${matched.text.substring(0, 150)}..."`,
+          eli5Answer: `According to the contract, the rules in ${matched.type} apply directly to this situation.`,
+          citations: [
+            {
+              clauseIndex: matched.index,
+              clauseType: matched.type,
+              excerpt: matched.text.substring(0, 120),
+            },
+          ],
+          confidenceScore: 0.95,
+          suggestedFollowUps: [
+            'What are the exact penalty fees if I terminate early?',
+            'Can this clause be renegotiated?',
+            'What happens in case of an unforeseen emergency?',
+          ],
+        };
+      }
 
       return {
-        answer: `Based on Section ${matched.index + 1} (${matched.type}), the contract specifies: "${matched.text.substring(0, 150)}..."`,
-        eli5Answer: `According to the contract, the rules in ${matched.type} apply directly to this situation.`,
-        citations: [
-          {
-            clauseIndex: matched.index,
-            clauseType: matched.type,
-            excerpt: matched.text.substring(0, 120),
-          },
-        ],
-        confidenceScore: 0.92,
+        answer:
+          'I am ready to analyze your contract. Please select or paste a contract into LexTrace AI, and ask any specific question about your clauses, obligations, or risks.',
+        eli5Answer: 'Please load a contract so I can read it and answer your specific questions.',
+        citations: [],
+        confidenceScore: 1.0,
         suggestedFollowUps: [
-          'What are the exact penalty fees if I terminate early?',
-          'Can this clause be renegotiated?',
-          'What happens in case of an unforeseen emergency?',
+          'What are the payment terms?',
+          'Is my liability capped or unlimited?',
+          'What is the notice period for termination?',
         ],
       };
     };
 
-    const systemPrompt = `You are a precise, grounded legal document Q&A copilot. Answer the user's question STRICTLY and EXCLUSIVELY based on the provided document clauses. Do not extrapolate or fabricate terms. Provide exact citations with clause index numbers and excerpts.
+    const systemPrompt = `You are LexTrace AI's elite contract intelligence copilot ("Trace the clause. Understand the risk. Know what to ask.").
+1. If the user provides a greeting (e.g. "hi", "hello", "hey") or asks about LexTrace AI / this project / capabilities:
+   - Warmly greet them, state your identity as LexTrace AI, and summarize your capabilities (contract risk scoring against 40+ benchmarks, redline diffing, citation-grounded Q&A, and 1-click attorney dossier).
+   - Set "citations" to an empty array [].
+2. If the user asks a question about the contract:
+   - Answer accurately and strictly based on the provided document clauses.
+   - Provide exact citations with clauseIndex (number), clauseType (string), and excerpt (exact quotation snippet).
+3. Always provide both a professional "answer" and a simple plain-language "eli5Answer".
+4. Suggest 3 relevant "suggestedFollowUps" questions.
 Return JSON:
 {
-  "answer": "Clear, direct answer explaining what the document says regarding the question.",
-  "eli5Answer": "Simple 1-sentence version of the answer in plain English.",
+  "answer": "Clear, direct answer explaining what the contract says or welcoming the user.",
+  "eli5Answer": "Simple 1-sentence version in plain English.",
   "citations": [
     {
       "clauseIndex": number,

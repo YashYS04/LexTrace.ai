@@ -33,8 +33,8 @@ export const compareRequestSchema = z.object({
 });
 
 export const chatRequestSchema = z.object({
-  question: z.string().min(3, 'Question must be at least 3 characters'),
-  documentText: z.string().min(20, 'Document text is required to ground the answer'),
+  question: z.string().min(1, 'Question cannot be empty'),
+  documentText: z.string().optional().default(''),
 });
 
 export const dossierRequestSchema = z.object({

@@ -176,7 +176,7 @@ export const AuditTab: React.FC<AuditTabProps> = ({
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Auditing with Gemini 2.5 Flash...</span>
+                <span>Auditing against 40+ market benchmarks...</span>
               </>
             ) : (
               <>

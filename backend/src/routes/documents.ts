@@ -93,8 +93,8 @@ router.post('/compare', validateBody(compareRequestSchema), async (req: Request,
  */
 router.post('/chat', validateBody(chatRequestSchema), async (req: Request, res: Response): Promise<void> => {
   try {
-    const { question, documentText } = req.body;
-    const clauses = ClauseSplitter.split(documentText);
+    const { question, documentText = '' } = req.body;
+    const clauses = documentText && documentText.trim().length > 0 ? ClauseSplitter.split(documentText) : [];
 
     const answer = await chatEngine.askQuestion(question, clauses, documentText);
     res.json({ success: true, data: answer });

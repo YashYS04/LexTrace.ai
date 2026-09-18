@@ -112,6 +112,8 @@ export function App() {
         {activeTab === 'chat' && (
           <ChatTab
             documentText={rawText}
+            onUpdateDocumentText={setRawText}
+            activeDocumentName={auditResult?.fileName || 'Freelance Agreement (Aggressive)'}
             readingLevel={readingLevel}
           />
         )}
@@ -126,20 +128,23 @@ export function App() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 py-6 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <footer className="bg-white border-t border-slate-200/80 py-6 mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <div className="flex items-center gap-2">
-            <span className="font-extrabold text-slate-800">LexTrace AI</span>
+            <span className="font-extrabold text-slate-900 tracking-tight">LexTrace AI</span>
             <span>•</span>
-            <span>Trace the clause. Understand the risk. Know what to ask.</span>
+            <span className="text-slate-600">Trace the clause. Understand the risk. Know what to ask.</span>
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1 text-emerald-700 font-semibold">
-              <CheckCircle className="w-3.5 h-3.5" /> 51 Automated Tests Passing
+          <div className="flex flex-wrap items-center gap-4 text-[11px] text-slate-500">
+            <span className="flex items-center gap-1.5 text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              Bank-Grade Pre-LLM PII Masking
             </span>
-            <span>•</span>
-            <span>Powered by Google Gemini 2.5 Flash</span>
+            <span className="hidden sm:inline">•</span>
+            <span>40+ Legal Benchmark Standards</span>
+            <span className="hidden sm:inline">•</span>
+            <span>Zero-Retention Privacy</span>
           </div>
         </div>
       </footer>

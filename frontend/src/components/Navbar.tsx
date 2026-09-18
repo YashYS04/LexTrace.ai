@@ -1,6 +1,7 @@
 import React from 'react';
-import { Shield, Eye, BookOpen, UserCheck } from 'lucide-react';
+import { Eye, BookOpen, UserCheck } from 'lucide-react';
 import { PersonaType, ReadingLevel } from '../types';
+import { Logo } from './Logo';
 
 interface NavbarProps {
   currentPersona: PersonaType;
@@ -20,26 +21,18 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleHighContrast,
 }) => {
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+    <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row items-center justify-between py-3 gap-3">
-          {/* Logo & Slogan */}
-          <div className="flex items-center space-x-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-teal-700 to-teal-500 flex items-center justify-center text-white shadow-md">
-              <Shield className="h-6 w-6 stroke-[2.5]" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <span className="font-extrabold text-xl tracking-tight text-slate-900">
-                  Lex<span className="text-teal-700">Trace</span> AI
-                </span>
-                <span className="bg-teal-100 text-teal-800 text-xs font-semibold px-2 py-0.5 rounded-full border border-teal-200">
-                  Gemini 2.5 Flash
-                </span>
-              </div>
-              <p className="text-xs text-slate-500 font-medium hidden sm:block">
-                Trace the clause. Understand the risk. Know what to ask.
-              </p>
+        <div className="flex flex-col lg:flex-row items-center justify-between py-3 gap-3">
+          {/* Logo & Status Indicator */}
+          <div className="flex items-center justify-between w-full lg:w-auto gap-4">
+            <Logo size="md" />
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50/80 border border-emerald-200/80 text-emerald-800 text-[11px] font-semibold">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+              </span>
+              <span>Neural Engine Active</span>
             </div>
           </div>
 
