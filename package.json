@@ -4,7 +4,7 @@
   "private": true,
   "description": "LexTrace AI - Trace the clause. Understand the risk. Know what to ask.",
   "scripts": {
-    "build": "cd frontend && npm install && npm run build"
+    "build": "cd backend && npm run build && cd ../frontend && npm run build"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
