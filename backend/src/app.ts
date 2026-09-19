@@ -28,17 +28,21 @@ export function createApp(): Application {
   app.use(rateLimiter);
 
   // Health check
-  app.get('/api/health', (req: Request, res: Response) => {
+  const healthHandler = (req: Request, res: Response) => {
     res.json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
       service: 'LexTrace AI Backend Engine',
       version: '1.0.0',
     });
-  });
+  };
 
-  // API Routes
+  app.get('/api/health', healthHandler);
+  app.get('/health', healthHandler);
+
+  // API Routes (mounted with and without /api prefix for serverless compatibility)
   app.use('/api/documents', documentsRouter);
+  app.use('/documents', documentsRouter);
 
   // Centralized Error Boundary
   app.use(errorHandler);
