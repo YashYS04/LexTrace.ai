@@ -133,18 +133,20 @@ ${dossier.obligationCalendar.map((o) => `| ${o.milestone} | ${o.clauseType} | ${
             <>
               <button
                 onClick={handlePrint}
-                className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                aria-label="Print or save attorney briefing sheet as PDF"
+                className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none"
                 title="Print or Save as PDF"
               >
-                <Printer className="w-3.5 h-3.5" />
+                <Printer className="w-3.5 h-3.5" aria-hidden="true" />
                 <span>Print / PDF</span>
               </button>
               <button
                 onClick={handleExportMarkdown}
-                className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                aria-label="Download attorney briefing sheet as Markdown file"
+                className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none"
                 title="Download as Markdown"
               >
-                <Download className="w-3.5 h-3.5" />
+                <Download className="w-3.5 h-3.5" aria-hidden="true" />
                 <span>Export .md</span>
               </button>
             </>
@@ -153,10 +155,21 @@ ${dossier.obligationCalendar.map((o) => `| ${o.milestone} | ${o.clauseType} | ${
           <button
             onClick={handleGenerateDossier}
             disabled={loading}
-            className="px-4 py-2.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors disabled:opacity-50"
+            aria-label={dossier ? 'Regenerate attorney intake brief' : 'Generate attorney intake brief'}
+            className="px-4 py-2.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition-colors disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none"
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4 text-teal-200" />}
-            <span>{dossier ? 'Regenerate Brief' : 'Generate Intake Brief'}</span>
+            {loading ? (
+              <span role="status" aria-live="polite" className="inline-flex items-center gap-1.5">
+                <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                <span>Generating Dossier...</span>
+                <span className="sr-only">Compiling attorney intake dossier...</span>
+              </span>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4 text-teal-200" aria-hidden="true" />
+                <span>{dossier ? 'Regenerate Brief' : 'Generate Intake Brief'}</span>
+              </>
+            )}
           </button>
         </div>
       </div>

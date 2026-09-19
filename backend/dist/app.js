@@ -12,8 +12,30 @@ const rateLimiter_1 = require("./middleware/rateLimiter");
 const errorHandler_1 = require("./middleware/errorHandler");
 function createApp() {
     const app = (0, express_1.default)();
-    // Security headers
-    app.use((0, helmet_1.default)());
+    // Security headers with strict production protections
+    app.use((0, helmet_1.default)({
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'", "'unsafe-inline'"],
+                styleSrc: ["'self'", "'unsafe-inline'"],
+                imgSrc: ["'self'", 'data:', 'https:'],
+                connectSrc: ["'self'", 'https://generativelanguage.googleapis.com'],
+                fontSrc: ["'self'", 'data:'],
+                objectSrc: ["'none'"],
+                upgradeInsecureRequests: [],
+            },
+        },
+        hsts: {
+            maxAge: 31536000,
+            includeSubDomains: true,
+            preload: true,
+        },
+        frameguard: { action: 'deny' },
+        noSniff: true,
+        referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+        xssFilter: true,
+    }));
     // CORS configuration
     app.use((0, cors_1.default)({
         origin: '*',

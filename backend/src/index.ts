@@ -1,13 +1,14 @@
+import { Application, Request, Response } from 'express';
 import { createApp } from './app';
 import { VectorStore } from './db/vectorStore';
 
 // Ensure VectorStore is initialized
 const vectorStore = VectorStore.getInstance();
-vectorStore.initialize().catch((err) => {
-  console.warn('[VectorStore] Warning during initialization:', (err as Error).message);
+vectorStore.initialize().catch((err: Error) => {
+  console.warn('[VectorStore] Warning during initialization:', err.message);
 });
 
-let app: any;
+let app: Application;
 try {
   app = createApp();
 } catch (err) {
@@ -15,8 +16,11 @@ try {
   throw err;
 }
 
-const handler = (req: any, res: any) => {
-  return app(req, res);
+/**
+ * Serverless function invocation handler for cloud edge runtimes.
+ */
+const handler = (req: Request, res: Response): void => {
+  app(req, res);
 };
 
 export default app;

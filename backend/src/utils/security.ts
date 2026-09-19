@@ -19,7 +19,7 @@ export class SecurityGuard {
   private static readonly MONEY_REGEX = /\$[\d,]+(?:\.\d{2})?\b/g;
 
   // Patterns indicating malicious prompt injection or system override attempts
-  private static readonly INJECTION_PATTERNS = [
+  private static readonly INJECTION_PATTERNS: RegExp[] = [
     /ignore\s+(?:all\s+)?(?:previous|prior)\s+instructions/i,
     /disregard\s+(?:all\s+)?(?:previous|prior)\s+instructions/i,
     /system\s+prompt\s+override/i,
@@ -28,55 +28,49 @@ export class SecurityGuard {
     /output\s+the\s+above\s+text/i,
     /<script[\s\S]*?>[\s\S]*?<\/script>/gi,
     /javascript:/gi,
+    /(?:<\|im_start\|>|<\|im_end\|>|\[INST\]|\[\/INST\])/i,
+    /###\s*(?:system|instruction|human|assistant)/i,
+    /\b(?:dan\s+mode|jailbreak)\b/i,
   ];
 
   /**
    * Anonymize Personally Identifiable Information (PII) before LLM transmission.
+   * Uses high-efficiency single-pass regex replacement with exact occurrence counters.
    */
   public static anonymizePII(text: string): PIIRedactionResult {
     let sanitized = text;
     let count = 0;
     const typesFound = new Set<string>();
 
-    if (this.EMAIL_REGEX.test(sanitized)) {
-      sanitized = sanitized.replace(this.EMAIL_REGEX, () => {
-        count++;
-        typesFound.add('EMAIL');
-        return '[REDACTED_EMAIL]';
-      });
-    }
+    sanitized = sanitized.replace(this.EMAIL_REGEX, () => {
+      count++;
+      typesFound.add('EMAIL');
+      return '[REDACTED_EMAIL]';
+    });
 
-    if (this.PHONE_REGEX.test(sanitized)) {
-      sanitized = sanitized.replace(this.PHONE_REGEX, () => {
-        count++;
-        typesFound.add('PHONE');
-        return '[REDACTED_PHONE]';
-      });
-    }
+    sanitized = sanitized.replace(this.PHONE_REGEX, () => {
+      count++;
+      typesFound.add('PHONE');
+      return '[REDACTED_PHONE]';
+    });
 
-    if (this.SSN_REGEX.test(sanitized)) {
-      sanitized = sanitized.replace(this.SSN_REGEX, () => {
-        count++;
-        typesFound.add('SSN');
-        return '[REDACTED_SSN]';
-      });
-    }
+    sanitized = sanitized.replace(this.SSN_REGEX, () => {
+      count++;
+      typesFound.add('SSN');
+      return '[REDACTED_SSN]';
+    });
 
-    if (this.CC_REGEX.test(sanitized)) {
-      sanitized = sanitized.replace(this.CC_REGEX, () => {
-        count++;
-        typesFound.add('CREDIT_CARD');
-        return '[REDACTED_CARD]';
-      });
-    }
+    sanitized = sanitized.replace(this.CC_REGEX, () => {
+      count++;
+      typesFound.add('CREDIT_CARD');
+      return '[REDACTED_CARD]';
+    });
 
-    if (this.ADDRESS_REGEX.test(sanitized)) {
-      sanitized = sanitized.replace(this.ADDRESS_REGEX, () => {
-        count++;
-        typesFound.add('ADDRESS');
-        return '[REDACTED_ADDRESS]';
-      });
-    }
+    sanitized = sanitized.replace(this.ADDRESS_REGEX, () => {
+      count++;
+      typesFound.add('ADDRESS');
+      return '[REDACTED_ADDRESS]';
+    });
 
     return {
       sanitizedText: sanitized,
@@ -86,11 +80,16 @@ export class SecurityGuard {
   }
 
   /**
-   * Check for adversarial prompt injection vectors.
+   * Check for adversarial prompt injection vectors with unicode and zero-width character normalization.
    */
   public static detectPromptInjection(input: string): { isSuspicious: boolean; matchedPattern?: string } {
+    // Normalize zero-width spaces, invisible formatting characters, and unicode homoglyphs
+    const normalized = input
+      .normalize('NFKC')
+      .replace(/[\u200B-\u200D\uFEFF\u202A-\u202E\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '');
+
     for (const pattern of this.INJECTION_PATTERNS) {
-      if (pattern.test(input)) {
+      if (pattern.test(normalized)) {
         return {
           isSuspicious: true,
           matchedPattern: pattern.toString(),

@@ -8,10 +8,19 @@ function rateLimiter(req, res, next) {
     if (env_1.env.NODE_ENV === 'test') {
         return next();
     }
-    const ip = req.ip || req.socket.remoteAddress || 'unknown';
+    const forwarded = req.headers['x-forwarded-for']?.split(',')[0]?.trim();
+    const ip = forwarded || req.ip || req.socket.remoteAddress || 'unknown';
     const now = Date.now();
     const windowMs = env_1.env.RATE_LIMIT_WINDOW_MS;
     const maxRequests = env_1.env.RATE_LIMIT_MAX_REQUESTS;
+    // Self-prune expired records when map grows large to prevent memory leaks
+    if (clientMap.size > 500) {
+        for (const [key, val] of clientMap.entries()) {
+            if (now > val.resetAt) {
+                clientMap.delete(key);
+            }
+        }
+    }
     let record = clientMap.get(ip);
     if (!record || now > record.resetAt) {
         record = { count: 1, resetAt: now + windowMs };

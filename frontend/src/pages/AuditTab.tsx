@@ -160,40 +160,52 @@ export const AuditTab: React.FC<AuditTabProps> = ({
         </div>
 
         {/* Text Area Input */}
+        <label htmlFor="contract-textarea" className="block text-xs font-bold text-slate-700 mb-1.5">
+          Agreement Text:
+        </label>
         <textarea
+          id="contract-textarea"
           value={rawText}
           onChange={(e) => setRawText(e.target.value)}
           placeholder="Paste full agreement text here (or drag and drop a file below)..."
           rows={5}
-          className="w-full text-xs font-mono p-3.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all"
+          aria-label="Contract text content for legal risk audit"
+          className="w-full text-xs font-mono p-3.5 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-teal-600 focus:border-transparent transition-all focus-visible:outline-none"
         />
 
         {/* Action Controls */}
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <label className="cursor-pointer inline-flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors border border-slate-300">
-            <UploadCloud className="w-4 h-4 text-slate-600" />
+          <label
+            htmlFor="file-upload-input"
+            className="cursor-pointer inline-flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors border border-slate-300 focus-within:ring-2 focus-within:ring-teal-600"
+          >
+            <UploadCloud className="w-4 h-4 text-slate-600" aria-hidden="true" />
             <span>Upload .txt or .pdf</span>
             <input
+              id="file-upload-input"
               type="file"
               accept=".txt,.pdf"
               onChange={handleFileUpload}
-              className="hidden"
+              aria-label="Upload contract file (.txt or .pdf format)"
+              className="sr-only"
             />
           </label>
 
           <button
             onClick={() => handleRunAudit()}
             disabled={loading}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all disabled:opacity-50"
+            aria-label="Run Complete Contract Audit against market benchmarks"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none"
           >
             {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
+              <span role="status" aria-live="polite" className="inline-flex items-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                 <span>Auditing against 40+ market benchmarks...</span>
-              </>
+                <span className="sr-only">Audit in progress, please wait</span>
+              </span>
             ) : (
               <>
-                <Sparkles className="w-4 h-4 text-teal-200" />
+                <Sparkles className="w-4 h-4 text-teal-200" aria-hidden="true" />
                 <span>Run Complete Contract Audit</span>
               </>
             )}
@@ -225,13 +237,19 @@ export const AuditTab: React.FC<AuditTabProps> = ({
               </div>
 
               {/* Filter Pills */}
-              <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs">
-                <Filter className="w-3.5 h-3.5 text-slate-500 ml-1 mr-0.5" />
+              <div
+                role="radiogroup"
+                aria-label="Filter clauses by risk level"
+                className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs"
+              >
+                <Filter className="w-3.5 h-3.5 text-slate-500 ml-1 mr-0.5" aria-hidden="true" />
                 {(['All', RiskLevel.Unfavorable, RiskLevel.Caution, RiskLevel.Standard] as const).map((filter) => (
                   <button
                     key={filter}
+                    role="radio"
+                    aria-checked={selectedRiskFilter === filter}
                     onClick={() => setSelectedRiskFilter(filter)}
-                    className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
+                    className={`px-2.5 py-1 rounded-md font-semibold transition-all focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none ${
                       selectedRiskFilter === filter
                         ? 'bg-white text-slate-900 shadow-xs border border-slate-200'
                         : 'text-slate-600 hover:text-slate-900'
@@ -244,9 +262,10 @@ export const AuditTab: React.FC<AuditTabProps> = ({
             </div>
 
             {/* Clauses List */}
-            <div className="mt-6 space-y-4">
+            <div className="mt-6 space-y-4" role="feed" aria-label="Audited Clauses List">
               {filteredClauses.map((clause) => {
                 const isExpanded = expandedClauses.has(clause.clauseIndex);
+                const detailsId = `clause-details-${clause.clauseIndex}`;
                 return (
                   <div
                     key={clause.clauseIndex}
@@ -261,8 +280,19 @@ export const AuditTab: React.FC<AuditTabProps> = ({
                   >
                     {/* Clause Header Bar */}
                     <div
+                      role="button"
+                      tabIndex={0}
+                      aria-expanded={isExpanded}
+                      aria-controls={detailsId}
+                      aria-label={`Clause ${clause.clauseIndex + 1}: ${clause.clauseType}, Risk Level: ${clause.riskLevel}. Click to ${isExpanded ? 'collapse' : 'expand'}`}
                       onClick={() => toggleClauseExpand(clause.clauseIndex)}
-                      className="p-4 cursor-pointer flex items-center justify-between gap-4 select-none"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          toggleClauseExpand(clause.clauseIndex);
+                        }
+                      }}
+                      className="p-4 cursor-pointer flex items-center justify-between gap-4 select-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none rounded-xl"
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-xs font-bold text-slate-400">
@@ -283,13 +313,13 @@ export const AuditTab: React.FC<AuditTabProps> = ({
                               : 'bg-emerald-100 text-emerald-800'
                           }`}
                         >
-                          {clause.riskLevel === RiskLevel.Unfavorable && <XCircle className="w-3.5 h-3.5" />}
-                          {clause.riskLevel === RiskLevel.Caution && <AlertTriangle className="w-3.5 h-3.5" />}
-                          {clause.riskLevel === RiskLevel.Standard && <CheckCircle2 className="w-3.5 h-3.5" />}
+                          {clause.riskLevel === RiskLevel.Unfavorable && <XCircle className="w-3.5 h-3.5" aria-hidden="true" />}
+                          {clause.riskLevel === RiskLevel.Caution && <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" />}
+                          {clause.riskLevel === RiskLevel.Standard && <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />}
                           {clause.riskLevel}
                         </span>
 
-                        <span className="text-xs text-slate-400 font-mono">
+                        <span className="text-xs text-slate-400 font-mono" aria-hidden="true">
                           {isExpanded ? '▲' : '▼'}
                         </span>
                       </div>
@@ -297,7 +327,7 @@ export const AuditTab: React.FC<AuditTabProps> = ({
 
                     {/* Expandable Clause Body */}
                     {isExpanded && (
-                      <div className="px-4 pb-4 pt-1 border-t border-slate-100/80 space-y-3">
+                      <div id={detailsId} className="px-4 pb-4 pt-1 border-t border-slate-100/80 space-y-3">
                         {/* Risk Explanation */}
                         <div className="p-3 bg-white rounded-lg border border-slate-200/80 text-xs">
                           <span className="font-bold text-slate-700 block mb-1">

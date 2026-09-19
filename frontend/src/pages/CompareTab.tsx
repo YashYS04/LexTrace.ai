@@ -87,37 +87,57 @@ export const CompareTab: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Doc 1 */}
           <div className="space-y-2">
+            <label htmlFor="doc1-name-input" className="block text-xs font-bold text-slate-700">
+              Version 1 Label:
+            </label>
             <input
+              id="doc1-name-input"
               type="text"
               value={doc1Name}
               onChange={(e) => setDoc1Name(e.target.value)}
-              className="w-full text-xs font-bold px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg"
+              aria-label="Name or label for Version 1 contract draft"
+              className="w-full text-xs font-bold px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none"
               placeholder="Name of Version 1 (e.g. Original Lease)"
             />
+            <label htmlFor="doc1-text-input" className="block text-xs font-bold text-slate-700">
+              Version 1 Text:
+            </label>
             <textarea
+              id="doc1-text-input"
               value={doc1Text}
               onChange={(e) => setDoc1Text(e.target.value)}
               rows={7}
               placeholder="Paste Version 1 text here..."
-              className="w-full text-xs font-mono p-3 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-teal-600"
+              aria-label="Version 1 contract draft full text"
+              className="w-full text-xs font-mono p-3 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-teal-600 focus-visible:outline-none"
             />
           </div>
 
           {/* Doc 2 */}
           <div className="space-y-2">
+            <label htmlFor="doc2-name-input" className="block text-xs font-bold text-slate-700">
+              Version 2 Label:
+            </label>
             <input
+              id="doc2-name-input"
               type="text"
               value={doc2Name}
               onChange={(e) => setDoc2Name(e.target.value)}
-              className="w-full text-xs font-bold px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg"
+              aria-label="Name or label for Version 2 contract draft"
+              className="w-full text-xs font-bold px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none"
               placeholder="Name of Version 2 (e.g. Landlord's Revised Lease)"
             />
+            <label htmlFor="doc2-text-input" className="block text-xs font-bold text-slate-700">
+              Version 2 Text:
+            </label>
             <textarea
+              id="doc2-text-input"
               value={doc2Text}
               onChange={(e) => setDoc2Text(e.target.value)}
               rows={7}
               placeholder="Paste Version 2 text here..."
-              className="w-full text-xs font-mono p-3 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-teal-600"
+              aria-label="Version 2 contract draft full text"
+              className="w-full text-xs font-mono p-3 bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:ring-2 focus:ring-teal-600 focus-visible:outline-none"
             />
           </div>
         </div>
@@ -127,16 +147,18 @@ export const CompareTab: React.FC = () => {
           <button
             onClick={handleCompare}
             disabled={loading}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all disabled:opacity-50"
+            aria-label="Compare and redline contract drafts"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold shadow-md hover:shadow-lg transition-all disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none"
           >
             {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
+              <span role="status" aria-live="polite" className="inline-flex items-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                 <span>Analyzing Semantic Divergence...</span>
-              </>
+                <span className="sr-only">Comparing contract versions...</span>
+              </span>
             ) : (
               <>
-                <GitCompare className="w-4 h-4 text-teal-200" />
+                <GitCompare className="w-4 h-4 text-teal-200" aria-hidden="true" />
                 <span>Compare & Redline Drafts</span>
               </>
             )}
@@ -146,7 +168,7 @@ export const CompareTab: React.FC = () => {
 
       {/* Comparison Results */}
       {comparisonResult && (
-        <div className="space-y-6 animate-in fade-in duration-300">
+        <div className="space-y-6 animate-in fade-in duration-300" role="region" aria-label="Contract Comparison Results">
           {/* Executive Divergence Card */}
           <section className="bg-gradient-to-r from-teal-900 to-slate-900 text-white rounded-2xl p-6 shadow-md">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4 pb-4 border-b border-teal-800/80">
@@ -232,21 +254,29 @@ export const CompareTab: React.FC = () => {
                   <strong>Semantic Shift:</strong> {item.semanticShift}
                 </p>
 
-                {/* Visual Redline Diff */}
+                {/* Visual Redline Diff with Semantic ins and del */}
                 <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-200 font-mono text-xs leading-relaxed max-h-48 overflow-y-auto">
                   {item.diffSegments.map((seg, sIdx) => {
                     if (seg.type === 'added') {
                       return (
-                        <span key={sIdx} className="bg-emerald-100 text-emerald-900 font-semibold px-0.5 rounded">
+                        <ins
+                          key={sIdx}
+                          aria-label={`Added text: ${seg.text}`}
+                          className="bg-emerald-100 text-emerald-900 font-semibold px-0.5 rounded no-underline inline-block"
+                        >
                           {seg.text}{' '}
-                        </span>
+                        </ins>
                       );
                     }
                     if (seg.type === 'removed') {
                       return (
-                        <span key={sIdx} className="bg-rose-100 text-rose-800 line-through px-0.5 rounded">
+                        <del
+                          key={sIdx}
+                          aria-label={`Removed text: ${seg.text}`}
+                          className="bg-rose-100 text-rose-800 line-through px-0.5 rounded inline-block"
+                        >
                           {seg.text}{' '}
-                        </span>
+                        </del>
                       );
                     }
                     return <span key={sIdx} className="text-slate-700">{seg.text} </span>;

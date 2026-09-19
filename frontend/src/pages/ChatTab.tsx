@@ -183,29 +183,37 @@ export const ChatTab: React.FC<ChatTabProps> = ({
             handleAsk();
           }}
           className="mt-5 flex gap-2"
+          aria-label="Legal Question Input Form"
         >
           <div className="relative flex-1">
+            <label htmlFor="chat-question-input" className="sr-only">
+              Ask a question about contract terms or LexTrace AI
+            </label>
             <input
+              id="chat-question-input"
               type="text"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="Ask anything about the contract terms, or type 'HI' to learn about LexTrace AI..."
-              className="w-full text-xs sm:text-sm px-4 py-3 bg-slate-50 border border-slate-300/90 rounded-xl focus:bg-white focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition-all placeholder:text-slate-400"
+              aria-label="Ask anything about the contract terms or type HI to learn about LexTrace AI"
+              className="w-full text-xs sm:text-sm px-4 py-3 bg-slate-50 border border-slate-300/90 rounded-xl focus:bg-white focus:ring-2 focus:ring-teal-600 focus:border-transparent outline-none transition-all placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-teal-600"
             />
           </div>
           <button
             type="submit"
             disabled={loading || !question.trim()}
-            className="px-5 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-xl font-bold text-xs sm:text-sm flex items-center gap-2 shadow-sm hover:shadow transition-all disabled:opacity-50"
+            aria-label="Submit question to legal AI engine"
+            className="px-5 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-xl font-bold text-xs sm:text-sm flex items-center gap-2 shadow-sm hover:shadow transition-all disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none"
           >
             {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
+              <span role="status" aria-live="polite" className="inline-flex items-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                 <span className="hidden sm:inline">Analyzing...</span>
-              </>
+                <span className="sr-only">AI is analyzing the contract clauses...</span>
+              </span>
             ) : (
               <>
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4" aria-hidden="true" />
                 <span>Ask</span>
               </>
             )}
@@ -214,15 +222,19 @@ export const ChatTab: React.FC<ChatTabProps> = ({
 
         {/* Error Notification Banner (No Browser alert) */}
         {errorMessage && (
-          <div className="mt-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="mt-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2"
+          >
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" aria-hidden="true" />
             <span>{errorMessage}</span>
           </div>
         )}
       </div>
 
       {/* Answers Conversation Stream */}
-      <div className="space-y-4">
+      <div className="space-y-4" role="log" aria-live="polite" aria-relevant="additions" aria-label="Q&A Conversation History">
         {/* Welcoming Greeting Message if history is empty */}
         {history.length === 0 && (
           <div className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm space-y-4">

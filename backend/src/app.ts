@@ -8,8 +8,32 @@ import { errorHandler } from './middleware/errorHandler';
 export function createApp(): Application {
   const app: Application = express();
 
-  // Security headers
-  app.use(helmet());
+  // Security headers with strict production protections
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+          connectSrc: ["'self'", 'https://generativelanguage.googleapis.com'],
+          fontSrc: ["'self'", 'data:'],
+          objectSrc: ["'none'"],
+          upgradeInsecureRequests: [],
+        },
+      },
+      hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true,
+      },
+      frameguard: { action: 'deny' },
+      noSniff: true,
+      referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+      xssFilter: true,
+    })
+  );
 
   // CORS configuration
   app.use(

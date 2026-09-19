@@ -15,8 +15,11 @@ catch (err) {
     console.error('[Startup] Failed to create Express app:', err);
     throw err;
 }
+/**
+ * Serverless function invocation handler for cloud edge runtimes.
+ */
 const handler = (req, res) => {
-    return app(req, res);
+    app(req, res);
 };
 exports.default = app;
 // CommonJS compatibility for Vercel Node runtime

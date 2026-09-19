@@ -41,89 +41,170 @@ export function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Tab Navigation */}
-        <div className="flex border-b border-slate-200 mb-6 space-x-1 sm:space-x-3 overflow-x-auto">
+        {/* Accessible Tab Navigation with WAI-ARIA Pattern */}
+        <div
+          role="tablist"
+          aria-label="LexTrace AI Workspace Navigation"
+          className="flex border-b border-slate-200 mb-6 space-x-1 sm:space-x-3 overflow-x-auto"
+          onKeyDown={(e) => {
+            const tabs: Array<'audit' | 'compare' | 'chat' | 'dossier'> = ['audit', 'compare', 'chat', 'dossier'];
+            const currentIndex = tabs.indexOf(activeTab);
+            if (e.key === 'ArrowRight') {
+              e.preventDefault();
+              const nextTab = tabs[(currentIndex + 1) % tabs.length];
+              setActiveTab(nextTab);
+              document.getElementById(`tab-${nextTab}`)?.focus();
+            } else if (e.key === 'ArrowLeft') {
+              e.preventDefault();
+              const prevTab = tabs[(currentIndex - 1 + tabs.length) % tabs.length];
+              setActiveTab(prevTab);
+              document.getElementById(`tab-${prevTab}`)?.focus();
+            } else if (e.key === 'Home') {
+              e.preventDefault();
+              setActiveTab('audit');
+              document.getElementById('tab-audit')?.focus();
+            } else if (e.key === 'End') {
+              e.preventDefault();
+              setActiveTab('dossier');
+              document.getElementById('tab-dossier')?.focus();
+            }
+          }}
+        >
           <button
+            id="tab-audit"
+            role="tab"
+            aria-selected={activeTab === 'audit'}
+            aria-controls="tabpanel-audit"
+            tabIndex={activeTab === 'audit' ? 0 : -1}
             onClick={() => setActiveTab('audit')}
-            className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-bold border-b-2 transition-all whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-bold border-b-2 transition-all whitespace-nowrap focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none ${
               activeTab === 'audit'
                 ? 'border-teal-700 text-teal-800'
                 : 'border-transparent text-slate-500 hover:text-slate-900 hover:border-slate-300'
             }`}
           >
-            <Shield className="w-4 h-4" />
+            <Shield className="w-4 h-4" aria-hidden="true" />
             <span>1. Audit & Gotchas</span>
             {auditResult && (
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500" aria-label="Audit completed" title="Audit completed"></span>
             )}
           </button>
 
           <button
+            id="tab-compare"
+            role="tab"
+            aria-selected={activeTab === 'compare'}
+            aria-controls="tabpanel-compare"
+            tabIndex={activeTab === 'compare' ? 0 : -1}
             onClick={() => setActiveTab('compare')}
-            className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-bold border-b-2 transition-all whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-bold border-b-2 transition-all whitespace-nowrap focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none ${
               activeTab === 'compare'
                 ? 'border-teal-700 text-teal-800'
                 : 'border-transparent text-slate-500 hover:text-slate-900 hover:border-slate-300'
             }`}
           >
-            <GitCompare className="w-4 h-4" />
+            <GitCompare className="w-4 h-4" aria-hidden="true" />
             <span>2. Compare & Redline</span>
           </button>
 
           <button
+            id="tab-chat"
+            role="tab"
+            aria-selected={activeTab === 'chat'}
+            aria-controls="tabpanel-chat"
+            tabIndex={activeTab === 'chat' ? 0 : -1}
             onClick={() => setActiveTab('chat')}
-            className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-bold border-b-2 transition-all whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-bold border-b-2 transition-all whitespace-nowrap focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none ${
               activeTab === 'chat'
                 ? 'border-teal-700 text-teal-800'
                 : 'border-transparent text-slate-500 hover:text-slate-900 hover:border-slate-300'
             }`}
           >
-            <MessageSquare className="w-4 h-4" />
+            <MessageSquare className="w-4 h-4" aria-hidden="true" />
             <span>3. Grounded Legal Q&A</span>
           </button>
 
           <button
+            id="tab-dossier"
+            role="tab"
+            aria-selected={activeTab === 'dossier'}
+            aria-controls="tabpanel-dossier"
+            tabIndex={activeTab === 'dossier' ? 0 : -1}
             onClick={() => setActiveTab('dossier')}
-            className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-bold border-b-2 transition-all whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-3 text-xs sm:text-sm font-bold border-b-2 transition-all whitespace-nowrap focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:outline-none ${
               activeTab === 'dossier'
                 ? 'border-teal-700 text-teal-800'
                 : 'border-transparent text-slate-500 hover:text-slate-900 hover:border-slate-300'
             }`}
           >
-            <FileBadge className="w-4 h-4" />
+            <FileBadge className="w-4 h-4" aria-hidden="true" />
             <span>4. Attorney Dossier & Timeline</span>
           </button>
         </div>
 
-        {/* Tab Views */}
+        {/* Accessible Tab Panels */}
         {activeTab === 'audit' && (
-          <AuditTab
-            currentPersona={persona}
-            readingLevel={readingLevel}
-            auditResult={auditResult}
-            onAuditComplete={handleAuditComplete}
-            rawText={rawText}
-            setRawText={setRawText}
-          />
+          <section
+            role="tabpanel"
+            id="tabpanel-audit"
+            aria-labelledby="tab-audit"
+            tabIndex={0}
+            className="focus:outline-none"
+          >
+            <AuditTab
+              currentPersona={persona}
+              readingLevel={readingLevel}
+              auditResult={auditResult}
+              onAuditComplete={handleAuditComplete}
+              rawText={rawText}
+              setRawText={setRawText}
+            />
+          </section>
         )}
 
-        {activeTab === 'compare' && <CompareTab />}
+        {activeTab === 'compare' && (
+          <section
+            role="tabpanel"
+            id="tabpanel-compare"
+            aria-labelledby="tab-compare"
+            tabIndex={0}
+            className="focus:outline-none"
+          >
+            <CompareTab />
+          </section>
+        )}
 
         {activeTab === 'chat' && (
-          <ChatTab
-            documentText={rawText}
-            onUpdateDocumentText={setRawText}
-            activeDocumentName={auditResult?.fileName || 'Freelance Agreement (Aggressive)'}
-            readingLevel={readingLevel}
-          />
+          <section
+            role="tabpanel"
+            id="tabpanel-chat"
+            aria-labelledby="tab-chat"
+            tabIndex={0}
+            className="focus:outline-none"
+          >
+            <ChatTab
+              documentText={rawText}
+              onUpdateDocumentText={setRawText}
+              activeDocumentName={auditResult?.fileName || 'Freelance Agreement (Aggressive)'}
+              readingLevel={readingLevel}
+            />
+          </section>
         )}
 
         {activeTab === 'dossier' && (
-          <DossierTab
-            documentText={rawText}
-            documentTitle={auditResult?.fileName || 'Contract Legal Brief'}
-            persona={persona}
-          />
+          <section
+            role="tabpanel"
+            id="tabpanel-dossier"
+            aria-labelledby="tab-dossier"
+            tabIndex={0}
+            className="focus:outline-none"
+          >
+            <DossierTab
+              documentText={rawText}
+              documentTitle={auditResult?.fileName || 'Contract Legal Brief'}
+              persona={persona}
+            />
+          </section>
         )}
       </main>
 

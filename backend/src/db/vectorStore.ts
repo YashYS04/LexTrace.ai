@@ -12,6 +12,8 @@ export class VectorStore {
   private benchmarks: BenchmarkClause[] = [...SEED_BENCHMARKS];
   private isInitialized: boolean = false;
 
+  private benchmarkTokenCache: Map<string, Set<string>> = new Map();
+
   private constructor() {}
 
   public static getInstance(): VectorStore {
@@ -22,13 +24,31 @@ export class VectorStore {
   }
 
   /**
-   * Initialize and seed the benchmark corpus.
+   * Tokenize string into lowercase alphanumeric word set.
+   */
+  public static tokenize(str: string): Set<string> {
+    return new Set(
+      str
+        .toLowerCase()
+        .replace(/[^\w\s]/g, ' ')
+        .split(/\s+/)
+        .filter((w) => w.length > 3)
+    );
+  }
+
+  /**
+   * Initialize and seed the benchmark corpus with pre-computed token caches.
    */
   public async initialize(): Promise<void> {
     if (this.isInitialized) return;
 
     if (!this.benchmarks || this.benchmarks.length === 0) {
       this.benchmarks = [...SEED_BENCHMARKS];
+    }
+
+    // Pre-compute token sets for all benchmarks to ensure O(1) similarity comparisons
+    for (const bm of this.benchmarks) {
+      this.benchmarkTokenCache.set(bm.id, VectorStore.tokenize(bm.standardText));
     }
 
     this.isInitialized = true;
@@ -56,21 +76,18 @@ export class VectorStore {
   }
 
   /**
-   * Fast token-overlap and keyword semantic similarity (used when vector embeddings are offline or mocked).
+   * Fast token-overlap and keyword semantic similarity using Jaccard index.
    */
   public static lexicalSemanticSimilarity(textA: string, textB: string): number {
-    const tokenize = (str: string) =>
-      new Set(
-        str
-          .toLowerCase()
-          .replace(/[^\w\s]/g, ' ')
-          .split(/\s+/)
-          .filter((w) => w.length > 3)
-      );
+    const tokensA = VectorStore.tokenize(textA);
+    const tokensB = VectorStore.tokenize(textB);
+    return VectorStore.computeJaccard(tokensA, tokensB);
+  }
 
-    const tokensA = tokenize(textA);
-    const tokensB = tokenize(textB);
-
+  /**
+   * Fast Jaccard similarity between two pre-computed token sets.
+   */
+  public static computeJaccard(tokensA: Set<string>, tokensB: Set<string>): number {
     if (tokensA.size === 0 || tokensB.size === 0) return 0;
 
     let intersection = 0;
@@ -80,13 +97,13 @@ export class VectorStore {
       }
     }
 
-    // Jaccard similarity
     const union = new Set([...tokensA, ...tokensB]).size;
     return union === 0 ? 0 : intersection / union;
   }
 
   /**
    * Find the most relevant market-standard benchmark clause for a given clause type and text.
+   * Utilizes pre-tokenized benchmark caches for ultra-low latency.
    */
   public findNearestBenchmark(
     clauseType: string,
@@ -120,14 +137,19 @@ export class VectorStore {
     let bestMatch: BenchmarkClause = candidates[0];
     let highestScore = -1;
 
+    // Tokenize target clause once for all candidate comparisons
+    const clauseTokens = !clauseEmbedding ? VectorStore.tokenize(clauseText) : null;
+
     for (const candidate of candidates) {
       let score = 0;
 
       if (clauseEmbedding && candidate.embedding) {
         score = VectorStore.cosineSimilarity(clauseEmbedding, candidate.embedding);
-      } else {
-        // High-precision lexical-semantic fallback
-        score = VectorStore.lexicalSemanticSimilarity(clauseText, candidate.standardText);
+      } else if (clauseTokens) {
+        // Fast-path using cached benchmark token sets
+        const cachedBmTokens = this.benchmarkTokenCache.get(candidate.id) || VectorStore.tokenize(candidate.standardText);
+        score = VectorStore.computeJaccard(clauseTokens, cachedBmTokens);
+
         // Boost if clauseType matches exactly
         if (candidate.clauseType.toLowerCase() === clauseType.toLowerCase()) {
           score = Math.min(1.0, score + 0.35);

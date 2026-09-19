@@ -6,6 +6,7 @@ class VectorStore {
     static instance;
     benchmarks = [...benchmarkClauses_1.SEED_BENCHMARKS];
     isInitialized = false;
+    benchmarkTokenCache = new Map();
     constructor() { }
     static getInstance() {
         if (!VectorStore.instance) {
@@ -14,13 +15,27 @@ class VectorStore {
         return VectorStore.instance;
     }
     /**
-     * Initialize and seed the benchmark corpus.
+     * Tokenize string into lowercase alphanumeric word set.
+     */
+    static tokenize(str) {
+        return new Set(str
+            .toLowerCase()
+            .replace(/[^\w\s]/g, ' ')
+            .split(/\s+/)
+            .filter((w) => w.length > 3));
+    }
+    /**
+     * Initialize and seed the benchmark corpus with pre-computed token caches.
      */
     async initialize() {
         if (this.isInitialized)
             return;
         if (!this.benchmarks || this.benchmarks.length === 0) {
             this.benchmarks = [...benchmarkClauses_1.SEED_BENCHMARKS];
+        }
+        // Pre-compute token sets for all benchmarks to ensure O(1) similarity comparisons
+        for (const bm of this.benchmarks) {
+            this.benchmarkTokenCache.set(bm.id, VectorStore.tokenize(bm.standardText));
         }
         this.isInitialized = true;
         console.log(`[VectorStore] Initialized with ${this.benchmarks.length} market benchmark clauses.`);
@@ -44,16 +59,17 @@ class VectorStore {
         return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
     }
     /**
-     * Fast token-overlap and keyword semantic similarity (used when vector embeddings are offline or mocked).
+     * Fast token-overlap and keyword semantic similarity using Jaccard index.
      */
     static lexicalSemanticSimilarity(textA, textB) {
-        const tokenize = (str) => new Set(str
-            .toLowerCase()
-            .replace(/[^\w\s]/g, ' ')
-            .split(/\s+/)
-            .filter((w) => w.length > 3));
-        const tokensA = tokenize(textA);
-        const tokensB = tokenize(textB);
+        const tokensA = VectorStore.tokenize(textA);
+        const tokensB = VectorStore.tokenize(textB);
+        return VectorStore.computeJaccard(tokensA, tokensB);
+    }
+    /**
+     * Fast Jaccard similarity between two pre-computed token sets.
+     */
+    static computeJaccard(tokensA, tokensB) {
         if (tokensA.size === 0 || tokensB.size === 0)
             return 0;
         let intersection = 0;
@@ -62,12 +78,12 @@ class VectorStore {
                 intersection++;
             }
         }
-        // Jaccard similarity
         const union = new Set([...tokensA, ...tokensB]).size;
         return union === 0 ? 0 : intersection / union;
     }
     /**
      * Find the most relevant market-standard benchmark clause for a given clause type and text.
+     * Utilizes pre-tokenized benchmark caches for ultra-low latency.
      */
     findNearestBenchmark(clauseType, clauseText, persona = 'All', clauseEmbedding) {
         if (this.benchmarks.length === 0)
@@ -87,14 +103,17 @@ class VectorStore {
         }
         let bestMatch = candidates[0];
         let highestScore = -1;
+        // Tokenize target clause once for all candidate comparisons
+        const clauseTokens = !clauseEmbedding ? VectorStore.tokenize(clauseText) : null;
         for (const candidate of candidates) {
             let score = 0;
             if (clauseEmbedding && candidate.embedding) {
                 score = VectorStore.cosineSimilarity(clauseEmbedding, candidate.embedding);
             }
-            else {
-                // High-precision lexical-semantic fallback
-                score = VectorStore.lexicalSemanticSimilarity(clauseText, candidate.standardText);
+            else if (clauseTokens) {
+                // Fast-path using cached benchmark token sets
+                const cachedBmTokens = this.benchmarkTokenCache.get(candidate.id) || VectorStore.tokenize(candidate.standardText);
+                score = VectorStore.computeJaccard(clauseTokens, cachedBmTokens);
                 // Boost if clauseType matches exactly
                 if (candidate.clauseType.toLowerCase() === clauseType.toLowerCase()) {
                     score = Math.min(1.0, score + 0.35);
