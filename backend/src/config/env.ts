@@ -10,7 +10,7 @@ const FALLBACK_GEMINI_KEY = Buffer.from(
 
 const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
-  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  NODE_ENV: z.string().default('development'),
   GEMINI_API_KEY: z.string().default(FALLBACK_GEMINI_KEY),
   GEMINI_MODEL: z.string().default('gemini-3.5-flash'),
   DATABASE_URL: z.string().optional(),

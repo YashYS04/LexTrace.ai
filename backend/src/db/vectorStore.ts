@@ -1,8 +1,6 @@
-import fs from 'fs';
-import path from 'path';
 import { BenchmarkClause, PersonaType } from '../types';
 import { env } from '../config/env';
-import seedBenchmarks from '../seeds/benchmark-clauses.json';
+import { SEED_BENCHMARKS } from '../seeds/benchmarkClauses';
 
 export interface VectorSearchResult {
   benchmark: BenchmarkClause;
@@ -11,7 +9,7 @@ export interface VectorSearchResult {
 
 export class VectorStore {
   private static instance: VectorStore;
-  private benchmarks: BenchmarkClause[] = (seedBenchmarks as BenchmarkClause[]) || [];
+  private benchmarks: BenchmarkClause[] = [...SEED_BENCHMARKS];
   private isInitialized: boolean = false;
 
   private constructor() {}
@@ -30,22 +28,7 @@ export class VectorStore {
     if (this.isInitialized) return;
 
     if (!this.benchmarks || this.benchmarks.length === 0) {
-      try {
-        const candidates = [
-          path.resolve(__dirname, '../seeds/benchmark-clauses.json'),
-          path.resolve(__dirname, '../../src/seeds/benchmark-clauses.json'),
-          path.resolve(process.cwd(), 'src/seeds/benchmark-clauses.json'),
-          path.resolve(process.cwd(), 'backend/src/seeds/benchmark-clauses.json'),
-        ];
-
-        const foundPath = candidates.find((p) => fs.existsSync(p));
-        if (foundPath) {
-          const rawData = fs.readFileSync(foundPath, 'utf-8');
-          this.benchmarks = JSON.parse(rawData);
-        }
-      } catch (err) {
-        console.warn('[VectorStore] Fallback loading failed:', (err as Error).message);
-      }
+      this.benchmarks = [...SEED_BENCHMARKS];
     }
 
     this.isInitialized = true;

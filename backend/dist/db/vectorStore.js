@@ -1,15 +1,10 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VectorStore = void 0;
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
-const benchmark_clauses_json_1 = __importDefault(require("../seeds/benchmark-clauses.json"));
+const benchmarkClauses_1 = require("../seeds/benchmarkClauses");
 class VectorStore {
     static instance;
-    benchmarks = benchmark_clauses_json_1.default || [];
+    benchmarks = [...benchmarkClauses_1.SEED_BENCHMARKS];
     isInitialized = false;
     constructor() { }
     static getInstance() {
@@ -25,22 +20,7 @@ class VectorStore {
         if (this.isInitialized)
             return;
         if (!this.benchmarks || this.benchmarks.length === 0) {
-            try {
-                const candidates = [
-                    path_1.default.resolve(__dirname, '../seeds/benchmark-clauses.json'),
-                    path_1.default.resolve(__dirname, '../../src/seeds/benchmark-clauses.json'),
-                    path_1.default.resolve(process.cwd(), 'src/seeds/benchmark-clauses.json'),
-                    path_1.default.resolve(process.cwd(), 'backend/src/seeds/benchmark-clauses.json'),
-                ];
-                const foundPath = candidates.find((p) => fs_1.default.existsSync(p));
-                if (foundPath) {
-                    const rawData = fs_1.default.readFileSync(foundPath, 'utf-8');
-                    this.benchmarks = JSON.parse(rawData);
-                }
-            }
-            catch (err) {
-                console.warn('[VectorStore] Fallback loading failed:', err.message);
-            }
+            this.benchmarks = [...benchmarkClauses_1.SEED_BENCHMARKS];
         }
         this.isInitialized = true;
         console.log(`[VectorStore] Initialized with ${this.benchmarks.length} market benchmark clauses.`);

@@ -7,8 +7,19 @@ const vectorStore = vectorStore_1.VectorStore.getInstance();
 vectorStore.initialize().catch((err) => {
     console.warn('[VectorStore] Warning during initialization:', err.message);
 });
-const app = (0, app_1.createApp)();
+let app;
+try {
+    app = (0, app_1.createApp)();
+}
+catch (err) {
+    console.error('[Startup] Failed to create Express app:', err);
+    throw err;
+}
+const handler = (req, res) => {
+    return app(req, res);
+};
 exports.default = app;
 // CommonJS compatibility for Vercel Node runtime
 module.exports = app;
 module.exports.default = app;
+module.exports.handler = handler;
