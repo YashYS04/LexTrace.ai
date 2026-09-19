@@ -10,10 +10,7 @@ import {
   ObligationDeadline,
   AttorneyQuestion,
 } from '../types';
-import { SecurityGuard } from '../utils/security';
-
-const LEGAL_DISCLAIMER =
-  'IMPORTANT: This analysis is provided for informational and educational purposes only and does not constitute formal legal advice. No attorney-client relationship is created. Consult a licensed attorney before signing or relying on binding contracts.';
+import { SecurityGuard, LEGAL_DISCLAIMER } from '../utils/security';
 
 export class GeminiService {
   private static instance: GeminiService;

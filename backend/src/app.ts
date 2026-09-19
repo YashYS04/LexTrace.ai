@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import documentsRouter from './routes/documents';
 import { rateLimiter } from './middleware/rateLimiter';
 import { errorHandler } from './middleware/errorHandler';
+import { LEGAL_DISCLAIMER } from './utils/security';
 
 export function createApp(): Application {
   const app: Application = express();
@@ -58,6 +59,7 @@ export function createApp(): Application {
       timestamp: new Date().toISOString(),
       service: 'LexTrace AI Backend Engine',
       version: '1.0.0',
+      disclaimer: LEGAL_DISCLAIMER,
     });
   };
 

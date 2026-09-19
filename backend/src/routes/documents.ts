@@ -15,6 +15,7 @@ import { GroundedChatEngine } from '../modules/chat/groundedChatEngine';
 import { DossierGenerator } from '../modules/dossier/dossierGenerator';
 import { VectorStore } from '../db/vectorStore';
 import { Hasher } from '../utils/hasher';
+import { LEGAL_DISCLAIMER } from '../utils/security';
 
 const router = Router();
 const upload = multer({
@@ -35,7 +36,7 @@ const vectorStore = VectorStore.getInstance();
 router.post('/upload', upload.single('file'), async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.file) {
-      res.status(400).json({ success: false, error: { message: 'No file uploaded.' } });
+      res.status(400).json({ success: false, error: { message: 'No file uploaded.' }, disclaimer: LEGAL_DISCLAIMER });
       return;
     }
 
@@ -47,9 +48,10 @@ router.post('/upload', upload.single('file'), async (req: Request, res: Response
         text,
         charCount: text.length,
       },
+      disclaimer: LEGAL_DISCLAIMER,
     });
   } catch (err) {
-    res.status(500).json({ success: false, error: { message: (err as Error).message } });
+    res.status(500).json({ success: false, error: { message: (err as Error).message }, disclaimer: LEGAL_DISCLAIMER });
   }
 });
 
@@ -64,9 +66,9 @@ router.post('/audit', validateBody(auditRequestSchema), async (req: Request, res
     const clauses = ClauseSplitter.split(text);
 
     const result = await scoringPipeline.analyzeDocument(docId, fileName, clauses, persona);
-    res.json({ success: true, data: result });
+    res.json({ success: true, data: result, disclaimer: LEGAL_DISCLAIMER });
   } catch (err) {
-    res.status(500).json({ success: false, error: { message: (err as Error).message } });
+    res.status(500).json({ success: false, error: { message: (err as Error).message }, disclaimer: LEGAL_DISCLAIMER });
   }
 });
 
@@ -81,9 +83,9 @@ router.post('/compare', validateBody(compareRequestSchema), async (req: Request,
     const clauses2 = ClauseSplitter.split(doc2Text);
 
     const result = await diffEngine.compare(doc1Name, clauses1, doc2Name, clauses2);
-    res.json({ success: true, data: result });
+    res.json({ success: true, data: result, disclaimer: LEGAL_DISCLAIMER });
   } catch (err) {
-    res.status(500).json({ success: false, error: { message: (err as Error).message } });
+    res.status(500).json({ success: false, error: { message: (err as Error).message }, disclaimer: LEGAL_DISCLAIMER });
   }
 });
 
@@ -97,9 +99,9 @@ router.post('/chat', validateBody(chatRequestSchema), async (req: Request, res: 
     const clauses = documentText && documentText.trim().length > 0 ? ClauseSplitter.split(documentText) : [];
 
     const answer = await chatEngine.askQuestion(question, clauses, documentText);
-    res.json({ success: true, data: answer });
+    res.json({ success: true, data: answer, disclaimer: LEGAL_DISCLAIMER });
   } catch (err) {
-    res.status(500).json({ success: false, error: { message: (err as Error).message } });
+    res.status(500).json({ success: false, error: { message: (err as Error).message }, disclaimer: LEGAL_DISCLAIMER });
   }
 });
 
@@ -114,9 +116,9 @@ router.post('/dossier', validateBody(dossierRequestSchema), async (req: Request,
     const audit = await scoringPipeline.analyzeDocument('temp_dossier', documentTitle, clauses, persona);
 
     const dossier = await dossierGenerator.generateDossier(documentTitle, persona, audit.clauses);
-    res.json({ success: true, data: dossier });
+    res.json({ success: true, data: dossier, disclaimer: LEGAL_DISCLAIMER });
   } catch (err) {
-    res.status(500).json({ success: false, error: { message: (err as Error).message } });
+    res.status(500).json({ success: false, error: { message: (err as Error).message }, disclaimer: LEGAL_DISCLAIMER });
   }
 });
 
@@ -133,9 +135,10 @@ router.get('/benchmarks', async (req: Request, res: Response): Promise<void> => 
         total: vectorStore.getAllBenchmarks().length,
         benchmarks: vectorStore.getAllBenchmarks(),
       },
+      disclaimer: LEGAL_DISCLAIMER,
     });
   } catch (err) {
-    res.status(500).json({ success: false, error: { message: (err as Error).message } });
+    res.status(500).json({ success: false, error: { message: (err as Error).message }, disclaimer: LEGAL_DISCLAIMER });
   }
 });
 

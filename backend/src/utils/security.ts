@@ -3,6 +3,9 @@
  * Provides PII Redaction, Input Sanitization, and Prompt Injection Defense.
  */
 
+export const LEGAL_DISCLAIMER =
+  'IMPORTANT: This analysis is provided for informational and educational purposes only and does not constitute formal legal advice. No attorney-client relationship is created. Consult a licensed attorney before signing or relying on binding contracts.';
+
 export interface PIIRedactionResult {
   sanitizedText: string;
   redactedCount: number;
