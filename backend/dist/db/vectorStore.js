@@ -1,0 +1,137 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VectorStore = void 0;
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
+const benchmark_clauses_json_1 = __importDefault(require("../seeds/benchmark-clauses.json"));
+class VectorStore {
+    static instance;
+    benchmarks = benchmark_clauses_json_1.default || [];
+    isInitialized = false;
+    constructor() { }
+    static getInstance() {
+        if (!VectorStore.instance) {
+            VectorStore.instance = new VectorStore();
+        }
+        return VectorStore.instance;
+    }
+    /**
+     * Initialize and seed the benchmark corpus.
+     */
+    async initialize() {
+        if (this.isInitialized)
+            return;
+        if (!this.benchmarks || this.benchmarks.length === 0) {
+            try {
+                const candidates = [
+                    path_1.default.resolve(__dirname, '../seeds/benchmark-clauses.json'),
+                    path_1.default.resolve(__dirname, '../../src/seeds/benchmark-clauses.json'),
+                    path_1.default.resolve(process.cwd(), 'src/seeds/benchmark-clauses.json'),
+                    path_1.default.resolve(process.cwd(), 'backend/src/seeds/benchmark-clauses.json'),
+                ];
+                const foundPath = candidates.find((p) => fs_1.default.existsSync(p));
+                if (foundPath) {
+                    const rawData = fs_1.default.readFileSync(foundPath, 'utf-8');
+                    this.benchmarks = JSON.parse(rawData);
+                }
+            }
+            catch (err) {
+                console.warn('[VectorStore] Fallback loading failed:', err.message);
+            }
+        }
+        this.isInitialized = true;
+        console.log(`[VectorStore] Initialized with ${this.benchmarks.length} market benchmark clauses.`);
+    }
+    /**
+     * Cosine similarity between two float vectors.
+     */
+    static cosineSimilarity(vecA, vecB) {
+        if (!vecA || !vecB || vecA.length !== vecB.length)
+            return 0;
+        let dotProduct = 0;
+        let normA = 0;
+        let normB = 0;
+        for (let i = 0; i < vecA.length; i++) {
+            dotProduct += vecA[i] * vecB[i];
+            normA += vecA[i] * vecA[i];
+            normB += vecB[i] * vecB[i];
+        }
+        if (normA === 0 || normB === 0)
+            return 0;
+        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+    }
+    /**
+     * Fast token-overlap and keyword semantic similarity (used when vector embeddings are offline or mocked).
+     */
+    static lexicalSemanticSimilarity(textA, textB) {
+        const tokenize = (str) => new Set(str
+            .toLowerCase()
+            .replace(/[^\w\s]/g, ' ')
+            .split(/\s+/)
+            .filter((w) => w.length > 3));
+        const tokensA = tokenize(textA);
+        const tokensB = tokenize(textB);
+        if (tokensA.size === 0 || tokensB.size === 0)
+            return 0;
+        let intersection = 0;
+        for (const token of tokensA) {
+            if (tokensB.has(token)) {
+                intersection++;
+            }
+        }
+        // Jaccard similarity
+        const union = new Set([...tokensA, ...tokensB]).size;
+        return union === 0 ? 0 : intersection / union;
+    }
+    /**
+     * Find the most relevant market-standard benchmark clause for a given clause type and text.
+     */
+    findNearestBenchmark(clauseType, clauseText, persona = 'All', clauseEmbedding) {
+        if (this.benchmarks.length === 0)
+            return null;
+        // Filter by clauseType and persona compatibility
+        let candidates = this.benchmarks.filter((b) => b.clauseType.toLowerCase() === clauseType.toLowerCase() &&
+            (b.applicablePersonas.includes('All') ||
+                b.applicablePersonas.includes(persona) ||
+                persona === 'All'));
+        // Fallback: match by clauseType only
+        if (candidates.length === 0) {
+            candidates = this.benchmarks.filter((b) => b.clauseType.toLowerCase() === clauseType.toLowerCase());
+        }
+        // Fallback: all benchmarks
+        if (candidates.length === 0) {
+            candidates = this.benchmarks;
+        }
+        let bestMatch = candidates[0];
+        let highestScore = -1;
+        for (const candidate of candidates) {
+            let score = 0;
+            if (clauseEmbedding && candidate.embedding) {
+                score = VectorStore.cosineSimilarity(clauseEmbedding, candidate.embedding);
+            }
+            else {
+                // High-precision lexical-semantic fallback
+                score = VectorStore.lexicalSemanticSimilarity(clauseText, candidate.standardText);
+                // Boost if clauseType matches exactly
+                if (candidate.clauseType.toLowerCase() === clauseType.toLowerCase()) {
+                    score = Math.min(1.0, score + 0.35);
+                }
+            }
+            if (score > highestScore) {
+                highestScore = score;
+                bestMatch = candidate;
+            }
+        }
+        return {
+            benchmark: bestMatch,
+            similarity: Math.round(Math.max(0.1, highestScore) * 100) / 100,
+        };
+    }
+    getAllBenchmarks() {
+        return [...this.benchmarks];
+    }
+}
+exports.VectorStore = VectorStore;

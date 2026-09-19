@@ -34,6 +34,19 @@ export const DossierTab: React.FC<DossierTabProps> = ({
         }),
       });
 
+      if (!res.ok) {
+        const textResp = await res.text();
+        let errMsg = `Server returned status ${res.status}`;
+        try {
+          const parsed = JSON.parse(textResp);
+          if (parsed.error?.message) errMsg = parsed.error.message;
+        } catch {
+          if (textResp && textResp.length > 0) errMsg = textResp.slice(0, 200);
+        }
+        alert(`Dossier generation error: ${errMsg}`);
+        return;
+      }
+
       const json = await res.json();
       if (json.success) {
         setDossier(json.data);

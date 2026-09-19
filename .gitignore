@@ -8,6 +8,8 @@ dist/
 build/
 coverage/
 *.tsbuildinfo
+!backend/dist/
+!backend/dist/**
 
 # Environment & Secrets
 .env

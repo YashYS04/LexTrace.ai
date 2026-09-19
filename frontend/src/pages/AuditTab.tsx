@@ -47,6 +47,19 @@ export const AuditTab: React.FC<AuditTabProps> = ({
         }),
       });
 
+      if (!response.ok) {
+        const textResp = await response.text();
+        let errMsg = `Server returned status ${response.status}`;
+        try {
+          const parsed = JSON.parse(textResp);
+          if (parsed.error?.message) errMsg = parsed.error.message;
+        } catch {
+          if (textResp && textResp.length > 0) errMsg = textResp.slice(0, 200);
+        }
+        alert(`Audit error: ${errMsg}`);
+        return;
+      }
+
       const json = await response.json();
       if (json.success) {
         onAuditComplete(json.data, text);
